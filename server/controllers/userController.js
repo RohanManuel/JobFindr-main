@@ -1,11 +1,11 @@
 import asyncHandler from "express-async-handler";
-import { users } from "@clerk/clerk-sdk-node";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
-    const user = await users.getUser(id);
+    const user = await clerkClient.users.getUser(id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
