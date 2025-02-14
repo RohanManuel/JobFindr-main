@@ -1,19 +1,22 @@
 "use client";
 import Header from "@/Components/Header";
 import JobForm from "@/Components/JobPost/JobForm";
-import { useGlobalContext } from "@/context/globalContext";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
-function page() {
-  const { isAuthenticated, loading } = useGlobalContext();
+function Page() {
+  const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (isLoaded && !isSignedIn) {
       router.push("https://jobfindr-main.onrender.com");
     }
-  }, [isAuthenticated]);
+  }, [isSignedIn, isLoaded, router]);
+
+  if (!isLoaded) return null;
+
   return (
     <div className="flex flex-col">
       <Header />
@@ -29,4 +32,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

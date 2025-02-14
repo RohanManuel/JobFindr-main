@@ -12,18 +12,13 @@ import {
   CardTitle,
 } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
-import { useGlobalContext } from "@/context/globalContext";
-import {
-  Briefcase,
-  Building,
-  CheckCircleIcon,
-  SearchIcon,
-  Users,
-} from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { Briefcase, Building, CheckCircleIcon, SearchIcon, Users } from "lucide-react";
 import Link from "next/link";
-import { title } from "process";
 
 export default function Home() {
+  const { isSignedIn, user } = useUser();
+
   const features = [
     {
       icon: <Briefcase className="w-6 h-6 text-[#7263f3]" />,
@@ -101,25 +96,19 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="flex flex-col h-full rounded-xl border-none"
-              >
+              <Card key={index} className="flex flex-col h-full rounded-xl border-none">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-xl mb-2">
-                    {feature.title}
-                  </CardTitle>
+                  <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <ul className="space-y-2">
-                    {feature.benefits.map((benefit, index) => (
-                      <li key={index} className="flex items-center">
+                    {feature.benefits.map((benefit, idx) => (
+                      <li key={idx} className="flex items-center">
                         <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-
                         <span>{benefit}</span>
                       </li>
                     ))}
@@ -135,10 +124,7 @@ export default function Home() {
           </div>
 
           <div className="mt-12 text-center">
-            <Badge
-              variant={"outline"}
-              className="text-sm font-medium border-gray-400"
-            >
+            <Badge variant={"outline"} className="text-sm font-medium border-gray-400">
               Trusted by 10,000+ companies worldwide
             </Badge>
           </div>
@@ -150,12 +136,20 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-8">Ready to Get Started?</h2>
 
           <div className="flex flex-col md:flex-row justify-center gap-4">
-            <Button size={"lg"} asChild>
-              <Link href={"/findwork"}>Find Work</Link>
-            </Button>
-            <Button size={"lg"} variant={"outline"} asChild>
-              <Link href={"/post"}>Post a Job</Link>
-            </Button>
+            {isSignedIn ? (
+              <>
+                <Button size={"lg"} asChild>
+                  <Link href={"/findwork"}>Find Work</Link>
+                </Button>
+                <Button size={"lg"} variant={"outline"} asChild>
+                  <Link href={"/post"}>Post a Job</Link>
+                </Button>
+              </>
+            ) : (
+              <Button size={"lg"} asChild>
+                <Link href={"/sign-in"}>Sign In to Get Started</Link>
+              </Button>
+            )}
           </div>
         </div>
       </section>

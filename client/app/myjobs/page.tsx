@@ -14,7 +14,7 @@ function Page() {
 
   const [activeTab, setActiveTab] = React.useState("posts");
 
-  const userId = user?.id;
+  const userId = user?.id || ""; // Ensures userId is always a string
 
   const router = useRouter();
 
@@ -22,7 +22,7 @@ function Page() {
     if (isLoaded && !isSignedIn) {
       router.push("https://jobfindr-main.onrender.com");
     }
-  }, [isSignedIn, isLoaded]);
+  }, [isSignedIn, isLoaded, router]);
 
   const likedJobs = jobs.filter((job: Job) => job.likes.includes(userId));
 

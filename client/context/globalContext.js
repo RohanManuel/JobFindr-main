@@ -1,12 +1,6 @@
-import React, {
-  createContext,
-  use,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useUser, useAuth } from "@clerk/nextjs";
 
 const GlobalContext = createContext();
 
@@ -14,8 +8,9 @@ axios.defaults.baseURL = "https://jobfindr-main.onrender.com";
 axios.defaults.withCredentials = true;
 
 export const GlobalContextProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [auth0User, setAuth0User] = useState(null);
+  const { user, isSignedIn } = useUser();
+  const { getToken } = useAuth();
+
   const [userProfile, setUserProfile] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -35,45 +30,25 @@ export const GlobalContextProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const checkAuth = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get("/api/v1/check-auth");
-        setIsAuthenticated(res.data.isAuthenticated);
-        setAuth0User(res.data.user);
-        setLoading(false);
-      } catch (error) {
-        console.log("Error checking auth", error);
-      } finally {
-        setLoading(false);
+    const fetchUserProfile = async () => {
+      if (isSignedIn && user) {
+        setLoading(true);
+        try {
+          const token = await getToken();
+          const res = await axios.get(`/api/v1/user/${user.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUserProfile(res.data);
+        } catch (error) {
+          console.log("Error fetching user profile", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
-    checkAuth();
-  }, []);
-
-  const getUserProfile = async (id) => {
-    try {
-      const res = await axios.get(`/api/v1/user/${id}`);
-
-      setUserProfile(res.data);
-    } catch (error) {
-      console.log("Error getting user profile", error);
-    }
-  };
-
-  // handle input change
-  const handleTitleChange = (e) => {
-    setJobTitle(e.target.value.trimStart());
-  };
-
-  const handleDescriptionChange = (e) => {
-    setJobDescription(e.target.value.trimStart());
-  };
-
-  const handleSalaryChange = (e) => {
-    setSalary(e.target.value);
-  };
+    fetchUserProfile();
+  }, [isSignedIn, user, getToken]);
 
   const resetJobForm = () => {
     setJobTitle("");
@@ -91,19 +66,12 @@ export const GlobalContextProvider = ({ children }) => {
     });
   };
 
-  useEffect(() => {
-    if (isAuthenticated && auth0User) {
-      getUserProfile(auth0User.sub);
-    }
-  }, [isAuthenticated, auth0User]);
-
   return (
     <GlobalContext.Provider
       value={{
-        isAuthenticated,
-        auth0User,
+        isAuthenticated: isSignedIn,
+        user,
         userProfile,
-        getUserProfile,
         loading,
         jobTitle,
         jobDescription,
@@ -114,11 +82,10 @@ export const GlobalContextProvider = ({ children }) => {
         tags,
         skills,
         location,
-        handleTitleChange,
-        handleDescriptionChange,
-        handleSalaryChange,
-        setActiveEmploymentTypes,
+        setJobTitle,
         setJobDescription,
+        setSalary,
+        setActiveEmploymentTypes,
         setSalaryType,
         setNegotiable,
         setTags,
