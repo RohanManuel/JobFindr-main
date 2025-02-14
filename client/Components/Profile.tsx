@@ -53,7 +53,7 @@ function Profile() {
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={() => {
-            router.push("https://jobfindr-q1cl.onrender.com/logout");
+            router.push("https://jobfindr-main.onrender.com/logout");
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />

@@ -103,7 +103,7 @@ function JobCard({ job, activeJob }: JobProps) {
           onClick={() => {
             isAuthenticated
               ? handleLike(job._id)
-              : router.push("https://jobfindr-q1cl.onrender.com/login");
+              : router.push("https://jobfindr-main.onrender.com");
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}
