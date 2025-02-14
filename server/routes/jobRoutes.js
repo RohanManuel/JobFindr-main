@@ -9,27 +9,27 @@ import {
   getJobById,
   deleteJob,
 } from "../controllers/jobController.js";
-import protect from "../middleware/protect.js";
+import { requireAuth } from "@clerk/clerk-sdk-node";
 
 const router = express.Router();
 
-router.post("/jobs", protect, createJob);
+router.post("/jobs", requireAuth(), createJob);
 router.get("/jobs", getJobs);
-router.get("/jobs/user/:id", protect, getJobsByUser);
+router.get("/jobs/user/:id", requireAuth(), getJobsByUser);
 
 // search jobs
 router.get("/jobs/search", searchJobs);
 
 // apply for job
-router.put("/jobs/apply/:id", protect, applyJob);
+router.put("/jobs/apply/:id", requireAuth(), applyJob);
 
 // like job and unlike job
-router.put("/jobs/like/:id", protect, likeJob);
+router.put("/jobs/like/:id", requireAuth(), likeJob);
 
 // getJobById
-router.get("/jobs/:id", protect, getJobById);
+router.get("/jobs/:id", requireAuth(), getJobById);
 
 // delete job
-router.delete("/jobs/:id", protect, deleteJob);
+router.delete("/jobs/:id", requireAuth(), deleteJob);
 
 export default router;

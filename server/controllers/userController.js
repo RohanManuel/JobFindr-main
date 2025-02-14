@@ -1,12 +1,11 @@
-import asycHandler from "express-async-handler";
-import User from "../models/UserModel.js";
+import asyncHandler from "express-async-handler";
+import { users } from "@clerk/clerk-sdk-node";
 
-export const getUserProfile = asycHandler(async (req, res) => {
+export const getUserProfile = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
-    // find user by auth0 id
-    const user = await User.findOne({ auth0Id: id });
+    const user = await users.getUser(id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
