@@ -27,7 +27,7 @@ const config = {
   session: {
     absoluteDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
     cookie: {
-      domain: process.env.NODE_ENV === 'production' ? "jobfindr-q1cl.onrender.com" : undefined,
+      domain: process.env.NODE_ENV === 'production' ? "jobfindr-main.onrender.com" : undefined,
       secure: process.env.NODE_ENV === 'production',  // Secure cookies only in production
       sameSite: process.env.NODE_ENV === 'production' ? "None" : "Lax",  // Adjust for local development
     },
